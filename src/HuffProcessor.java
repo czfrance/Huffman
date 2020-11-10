@@ -10,6 +10,7 @@ import java.util.TreeMap;
  * and including debug and bits read/written information
  * 
  * @author Owen Astrachan
+ * @author Cynthia France: methods compress, decompress & all related helper methods
  */
 
 public class HuffProcessor {
@@ -56,16 +57,8 @@ public class HuffProcessor {
 		in.reset();
 		writeCompressedBits(encodings, in, out);
 		out.close();
-
-
-//		// remove all this code when implementing compress
-//		while (true){
-//			int val = in.readBits(BITS_PER_WORD);
-//			if (val == -1) break;
-//			out.writeBits(BITS_PER_WORD, val);
-//		}
-//		out.close();
 	}
+
 	/**
 	 * Decompresses a file. Output file must be identical bit-by-bit to the
 	 * original.
@@ -131,16 +124,6 @@ public class HuffProcessor {
 			int value = in.readBits(BITS_PER_WORD + 1);
 			return new HuffNode(value, 0, null, null);
 		}
-	}
-
-	private void printTree(HuffNode root) {
-		if (root == null) {
-			return;
-		}
-
-		System.out.println(root.myValue);
-		printTree(root.myLeft);
-		printTree(root.myRight);
 	}
 
 	private int[] readForCounts(BitInputStream in) {
