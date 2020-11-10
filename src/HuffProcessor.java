@@ -64,7 +64,7 @@ public class HuffProcessor {
 //			if (val == -1) break;
 //			out.writeBits(BITS_PER_WORD, val);
 //		}
-		out.close();
+//		out.close();
 	}
 	/**
 	 * Decompresses a file. Output file must be identical bit-by-bit to the
