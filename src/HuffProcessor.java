@@ -68,7 +68,7 @@ public class HuffProcessor {
 		}
 
 		HuffNode root = readTree(in);
-		printTree(root);
+		//printTree(root);
 		HuffNode curr = root;
 
 		while (true) {
@@ -115,7 +115,7 @@ public class HuffProcessor {
 		out.close();
 	}
 
-	public HuffNode readTree(BitInputStream in) {
+	private HuffNode readTree(BitInputStream in) {
 		int curr = in.readBits(1);
 
 		if (curr == -1) {
@@ -134,7 +134,7 @@ public class HuffProcessor {
 		}
 	}
 
-	public void printTree(HuffNode root) {
+	private void printTree(HuffNode root) {
 		if (root == null) {
 			return;
 		}
