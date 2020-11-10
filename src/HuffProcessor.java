@@ -62,17 +62,96 @@ public class HuffProcessor {
 	public void decompress(BitInputStream in, BitOutputStream out){
 
 		int magic = in.readBits(BITS_PER_INT);
+		//System.out.println("MAGIC: " + magic);
 		if (magic != HUFF_TREE) {
 			throw new HuffException("invalid magic number "+magic);
 		}
-		// remove all code below this point for P7
 
-		out.writeBits(BITS_PER_INT,magic);
-		while (true){
-			int val = in.readBits(BITS_PER_WORD);
-			if (val == -1) break;
-			out.writeBits(BITS_PER_WORD, val);
+		HuffNode root = readTree(in);
+		printTree(root);
+		HuffNode curr = root;
+
+		while (true) {
+			int bits = in.readBits(1);
+			//System.out.println("curr bit: " + bits);
+
+			if (bits == -1) {
+				throw new HuffException("bad input, no PSEUDO_EOF");
+			}
+
+			else {
+				if (bits == 0) {
+					curr = curr.myLeft;
+				}
+				else {
+					curr = curr.myRight;
+				}
+
+				if (curr.myLeft == null && curr.myRight == null) {
+					if (curr.myValue == PSEUDO_EOF) {
+						//System.out.println("end of text file");
+						break;
+					}
+					else {
+						out.writeBits(BITS_PER_WORD, curr.myValue);
+						//System.out.println("wrote bit " + curr.myValue + " to file");
+						curr = root;
+					}
+				}
+			}
 		}
+
+
+
+//		// remove all code below this point for P7
+//
+//		out.writeBits(BITS_PER_INT,magic);
+//		while (true){
+//			int val = in.readBits(BITS_PER_WORD);
+//			System.out.println("VAL: " + val);
+//			if (val == -1) break;
+//			out.writeBits(BITS_PER_WORD, val);
+//		}
 		out.close();
 	}
+
+	public HuffNode readTree(BitInputStream in) {
+		int curr = in.readBits(1);
+
+		if (curr == -1) {
+			throw new HuffException("error in writing bits, -1 DNE");
+		}
+
+		if (curr == 0) {
+			HuffNode left = readTree(in);
+			HuffNode right = readTree(in);
+
+			return new HuffNode(0, 0, left, right);
+		}
+		else {
+			int value = in.readBits(BITS_PER_WORD + 1);
+			return new HuffNode(value, 0, null, null);
+		}
+	}
+
+	public void printTree(HuffNode root) {
+		if (root == null) {
+			return;
+		}
+
+		System.out.println(root.myValue);
+		printTree(root.myLeft);
+		printTree(root.myRight);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
